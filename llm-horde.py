@@ -1,4 +1,5 @@
 import llm
+from .horde_request import generate
 
 @llm.hookimpl
 def register_models(register):
@@ -8,4 +9,5 @@ class Horde(llm.Model):
     model_id = "horde"
 
     def execute(self, prompt, stream, response, conversation):
-        return ["hello world"]
+        gen = generate(prompt)
+        return [x["text"] for x in gen["generations"]]

@@ -1,0 +1,6 @@
+[project]
+name = "llm-horde"
+version = "0.1"
+
+[project.entry-points.llm]
+horde = "llm-horde"
