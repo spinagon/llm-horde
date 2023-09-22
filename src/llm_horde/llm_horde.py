@@ -1,5 +1,5 @@
 import llm
-from .lib.horde_request import generate
+from .horde_request import generate
 
 @llm.hookimpl
 def register_models(register):
