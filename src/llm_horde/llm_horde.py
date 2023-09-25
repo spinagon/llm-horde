@@ -122,11 +122,12 @@ class Horde(llm.Model):
 
         context = []
         if conversation:
-            context.append(
-                templates[instruct]["system"].format(
-                    system=conversation.responses[0].prompt.system
+            if conversation.responses and conversation.responses[0].prompt.system:
+                context.append(
+                    templates[instruct]["system"].format(
+                        system=conversation.responses[0].prompt.system
+                    )
                 )
-            )
             for resp in conversation.responses:
                 context.append(
                     templates[instruct]["user"].format(prompt=resp.prompt.prompt)
