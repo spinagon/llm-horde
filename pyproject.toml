@@ -1,6 +1,9 @@
 [project]
 name = "llm-horde"
 version = "0.1"
+dependencies = [
+    "httpx",
+]
 
 [project.entry-points.llm]
 horde = "llm_horde"
