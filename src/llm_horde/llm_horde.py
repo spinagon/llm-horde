@@ -16,7 +16,7 @@ def register_models(register):
 class Horde(llm.Model):
     model_prefix = "horde"
     needs_key = "aihorde"
-    key_env_var = "AIHORDE_APIKEY"
+    key_env_var = "AIHORDE_KEY"
 
     def __init__(self):
         super().__init__()
