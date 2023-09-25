@@ -1,9 +1,22 @@
 [project]
 name = "llm-horde"
 version = "0.1"
+description = "Plugin for LLM adding models hosted on AI Horde"
+readme = "README.md"
+authors = [{name = "spinagon"}]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "License :: OSI Approved :: Apache Software License"
+]
 dependencies = [
+    "llm",
     "httpx",
 ]
+
+[project.urls]
+Homepage = "https://github.com/spinagon/llm-horde"
+Changelog = "https://github.com/spinagon/llm-horde/releases"
+Issues = "https://github.com/spinagon/llm-horde/issues"
 
 [project.entry-points.llm]
 horde = "llm_horde"

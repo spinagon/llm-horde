@@ -7,10 +7,14 @@ from . import horde_request
 @llm.hookimpl
 def register_models(register):
     global MODELS
-    MODELS = horde_request.get_models()
-    for model in MODELS:
-        register(ModelFactory.model(f"{Horde.model_prefix}/{model}"))
-    register(ModelFactory.model(Horde.model_prefix))
+    try:
+        MODELS = horde_request.get_models()
+        for model in MODELS:
+            register(ModelFactory.model(f"{Horde.model_prefix}/{model}"))
+        register(ModelFactory.model(Horde.model_prefix))
+    except Exception as e:
+        print("llm-horde plugin error in register_models():", repr(e))
+        return
 
 
 class Horde(llm.Model):
