@@ -37,7 +37,6 @@ You should see a list that looks something like this:
 AI Horde: horde/Henk717/airochronos-33B
 AI Horde: horde/tgi-fp16-8k/migtissera/Synthia-70B-v1.2b
 AI Horde: horde/Gryphe/MythoMax-L2-13b
-...
 ```
 To run a prompt against a model, pass its full model ID to the `-m` option, like this:
 ```bash
@@ -49,7 +48,7 @@ llm aliases set synthia horde/tgi-fp16-8k/migtissera/Synthia-70B-v1.2b
 ```
 Now you can prompt it using:
 ```bash
-cat llm_openrouter.py | llm -m synthia -s 'write some pytest tests for this'
+cat llm_horde.py | llm -m synthia -s 'write some pytest tests for this'
 ```
 If you use "horde" as a model name, you can select one or more models matching a regex pattern using "pattern" option:
 ```bash
