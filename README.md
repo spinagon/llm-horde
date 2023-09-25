@@ -1,5 +1,4 @@
 # llm-horde
-LLM plugin for models hosted by AI Horde
 [LLM](https://llm.datasette.io/) plugin for models hosted by [AI Horde](https://aihorde.net/)
 
 ## Installation
