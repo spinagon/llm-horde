@@ -14,7 +14,7 @@ llm install https://github.com/spinagon/llm-horde/archive/refs/heads/main.zip
 
 First [Register an account](https://aihorde.net/register) which will generate for you an API key. Store that key somewhere.
 
- - If you do not want to register, you can use '0000000000' as api_key to connect anonymously. However anonymous accounts have the lowest priority when there's too many concurrent requests!
+ - If you do not want to register, you can use '0000000000' as api_key to connect anonymously. If you don't set your key, it will be used automatically. However anonymous accounts have the lowest priority when there's too many concurrent requests!
  - To increase your priority you will need a unique API key and then to increase your Kudos. [Read how Kudos are working](https://dbzer0.com/blog/the-kudos-based-economy-for-the-koboldai-horde/).
 
 You can set that as an environment variable called `AIHORDE_KEY`, or add it to the `llm` set of saved keys using:
