@@ -54,3 +54,15 @@ If you use "horde" as a model name, you can select one or more models matching a
 ```bash
 llm -m horde -o pattern "13B" "What is the capital of Lebanon?"
 ```
+You can change the maximum length of returned text by using "max_tokens" option (80 by default), most workers will not :
+```bash
+llm -m horde -o pattern mythomax -s 'Write a sonnet' -o max_tokens 120
+```
+If you want to continue generating text without new prompt, try:
+```bash
+llm -c ""
+```
+To start interactive chat, type 
+```bash
+llm chat -m horde -o pattern llama2
+```
