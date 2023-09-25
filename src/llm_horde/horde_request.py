@@ -3,9 +3,12 @@
 import httpx
 import time
 import sys
+import json
 
-APIKEY = "0" * 10
+ANON_APIKEY = "0" * 10
+APIKEY = ANON_APIKEY
 CLIENT_AGENT = "llm-horde:0.1:https://github.com/spinagon"
+JOB_MAX_TIME = 20 * 60
 
 
 def get_headers():
@@ -13,7 +16,7 @@ def get_headers():
     return headers
 
 
-def generate(prompt, options):
+def generate(prompt, models, options):
     params = {
         "max_context_length": 1024,
         "max_length": 80,
@@ -25,7 +28,7 @@ def generate(prompt, options):
         json={
             "prompt": prompt,
             "params": params,
-            "models": [],
+            "models": models,
         },
     )
 
@@ -35,8 +38,9 @@ def generate(prompt, options):
         print(r, r.json())
         return {"generations": [{"text": "Error"}]}
 
-    for i in range(10):
-        time.sleep(5)
+    start_time = time.time()
+    while (time.time() - start_time) < JOB_MAX_TIME:
+        time.sleep(3)
         r = httpx.get(
             f"https://aihorde.net/api/v2/generate/text/status/{id}",
             headers=get_headers(),
@@ -47,9 +51,14 @@ def generate(prompt, options):
 
 def get_models():
     r = httpx.get("https://aihorde.net/api/v2/workers?type=text", headers=get_headers())
-    models = {x["models"][0] for x in r.json()}
+    try:
+        data = r.json()
+    except json.decoder.JSONDecodeError:
+        print(r.text)
+        return []
+    models = {x["models"][0] for x in data}
     return list(models)
 
 
 if __name__ == "__main__":
-    print(generate(sys.argv[1]))
+    print(generate(sys.argv[1], [], {}))
