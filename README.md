@@ -35,20 +35,20 @@ llm models list
 You should see a list that looks something like this:
 ```
 AI Horde: horde/Henk717/airochronos-33B
-AI Horde: horde/tgi-fp16-8k/migtissera/Synthia-70B-v1.2b
+AI Horde: horde/tgi-fp16-8k/Xwin-LM/Xwin-LM-70B-V0.1
 AI Horde: horde/Gryphe/MythoMax-L2-13b
 ```
 To run a prompt against a model, pass its full model ID to the `-m` option, like this:
 ```bash
-llm -m horde/tgi-fp16-8k/migtissera/Synthia-70B-v1.2b "Five spooky names for a pet vampire bat"
+llm -m horde/Henk717/airochronos-33B "Five spooky names for a pet vampire bat"
 ```
 You can set a shorter alias for a model using the `llm aliases` command like so:
 ```bash
-llm aliases set synthia horde/tgi-fp16-8k/migtissera/Synthia-70B-v1.2b
+llm aliases set airochronos horde/Henk717/airochronos-33B
 ```
 Now you can prompt it using:
 ```bash
-cat llm_horde.py | llm -m synthia -s 'write some pytest tests for this'
+cat llm_horde.py | llm -m airochronos -s 'write some pytest tests for this'
 ```
 If you use "horde" as a model name, you can select one or more models matching a regex pattern using "pattern" option:
 ```bash
