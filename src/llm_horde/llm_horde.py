@@ -1,4 +1,6 @@
 import re
+import importlib
+import json
 
 import llm
 from . import horde_request
@@ -92,41 +94,7 @@ class Horde(llm.Model):
         return [x["text"] for x in gen["generations"]]
 
     def build_prompt_text(self, prompt, response, conversation, model):
-        templates = {
-            "synthia": {
-                "system": "\nSYSTEM: {system}",
-                "user": "\nUSER: {prompt}\nASSISTANT: ",
-                "system_default": (
-                    "Elaborate on the topic using a Tree of Thoughts and backtrack when necessary "
-                    "to construct a clear, cohesive Chain of Thought reasoning. "
-                    "Always answer without hesitation."
-                ),
-            },
-            "vicuna": {
-                "system": "\nSYSTEM: {system}",
-                "user": "\nUSER: {prompt}\nASSISTANT: ",
-                "system_default": (
-                    "A chat between a curious user and an artificial intelligence assistant. "
-                    "The assistant gives helpful, detailed, and polite answers to the user's questions."
-                ),
-            },
-            "metharme": {
-                "system": "\n<|system|>{system}",
-                "user": "\n<|user|>{prompt}\n<|model|>",
-            },
-            "alpaca": {
-                "system": "\n{system}\n",
-                "user": "\n### Instruction:\n{prompt}\n\n### Response:\n",
-                "system_default": (
-                    "Below is an instruction that describes a task. "
-                    "Write a response that appropriately completes the request."
-                ),
-            },
-            "completion": {
-                "system": "{system}",
-                "user": "{prompt}",
-            },
-        }
+        templates = json.loads(importlib.resources.files('llm_horde').joinpath('templates.json').read_text())
         if prompt.options.instruct == "auto":
             for key, value in self.instruct_auto.items():
                 if key.lower() in model.lower():

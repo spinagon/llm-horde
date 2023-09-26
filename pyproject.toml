@@ -20,3 +20,9 @@ Issues = "https://github.com/spinagon/llm-horde/issues"
 
 [project.entry-points.llm]
 horde = "llm_horde"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+llm-horde = ["*.json"]
