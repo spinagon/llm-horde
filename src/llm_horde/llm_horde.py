@@ -94,7 +94,11 @@ class Horde(llm.Model):
         return [x["text"] for x in gen["generations"]]
 
     def build_prompt_text(self, prompt, response, conversation, model):
-        templates = json.loads(importlib.resources.files('llm_horde').joinpath('templates.json').read_text())
+        templates = json.loads(
+            importlib.resources.files("llm_horde")
+            .joinpath("templates.json")
+            .read_text()
+        )
         if prompt.options.instruct == "auto":
             for key, value in self.instruct_auto.items():
                 if key.lower() in model.lower():
@@ -109,20 +113,7 @@ class Horde(llm.Model):
         if prompt.system is None:
             prompt.system = templates[instruct].get("system_default", None)
 
-        context = []
-        if conversation:
-            if conversation.responses and conversation.responses[0].prompt.system:
-                context.append(
-                    templates[instruct]["system"].format(
-                        system=conversation.responses[0].prompt.system
-                    )
-                )
-            for resp in conversation.responses:
-                context.append(
-                    templates[instruct]["user"].format(prompt=resp.prompt.prompt)
-                )
-                context.append(resp.text())
-        context = "".join(context)
+        context = rebuild_conversation(conversation, templates[instruct])
 
         if prompt.prompt == "" or instruct == "completion":
             prompt_text = context + prompt.prompt
@@ -139,6 +130,24 @@ class Horde(llm.Model):
 
     def __repr__(self):
         return f"AI Horde: {self.model_id}"
+
+
+def rebuild_conversation(conversation, template):
+    context = []
+    if conversation:
+        if conversation.responses and conversation.responses[0].prompt.system:
+            context.append(
+                template["system"].format(
+                    system=conversation.responses[0].prompt.system
+                )
+            )
+        for resp in conversation.responses:
+            if resp.prompt.prompt:
+                context.append(
+                    template["user"].format(prompt=resp.prompt.prompt)
+                )
+            context.append(resp.text())
+    return "".join(context)
 
 
 class ModelFactory:
