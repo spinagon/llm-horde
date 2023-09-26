@@ -43,8 +43,8 @@ class Horde(llm.Model):
         "airo": "alpaca",
         "wizardcoder": "alpaca",
         "wizardlm": "vicuna",
+        "xwin": "vicuna",
         "alion": "metharme",
-        "xwin": "xwin",
         "erebus": "completion",
     }
 
@@ -96,14 +96,19 @@ class Horde(llm.Model):
             "synthia": {
                 "system": "\nSYSTEM: {system}",
                 "user": "\nUSER: {prompt}\nASSISTANT: ",
-            },
-            "xwin": {
-                "system": "\nSYSTEM: {system}",
-                "user": "\nUSER: {prompt}\nASSISTANT: ",
+                "system_default": (
+                    "SYSTEM: Elaborate on the topic using a Tree of Thoughts and backtrack when necessary "
+                    "to construct a clear, cohesive Chain of Thought reasoning. "
+                    "Always answer without hesitation."
+                ),
             },
             "vicuna": {
-                "system": "\n[SYSTEM]\n{system}",
-                "user": "\n### USER:\n{prompt}\n### ASSISTANT:\n",
+                "system": "\nSYSTEM: {system}",
+                "user": "\nUSER: {prompt}\nASSISTANT: ",
+                "system_default": (
+                    "A chat between a curious user and an artificial intelligence assistant. "
+                    "The assistant gives helpful, detailed, and polite answers to the user's questions."
+                ),
             },
             "metharme": {
                 "system": "\n<|system|>{system}",
@@ -112,6 +117,10 @@ class Horde(llm.Model):
             "alpaca": {
                 "system": "\n{system}\n",
                 "user": "\n### Instruction:\n{prompt}\n\n### Response:\n",
+                "system_default": (
+                    "Below is an instruction that describes a task. "
+                    "Write a response that appropriately completes the request."
+                ),
             },
             "completion": {
                 "system": "{system}",
@@ -128,6 +137,9 @@ class Horde(llm.Model):
         else:
             instruct = prompt.options.instruct
         response.response_json["instruct"] = instruct
+
+        if prompt.system is None:
+            prompt.system = templates[instruct].get("system_default", None)
 
         context = []
         if conversation:
