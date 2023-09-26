@@ -1,6 +1,6 @@
 [project]
 name = "llm-horde"
-version = "0.1"
+version = "0.2"
 description = "Plugin for LLM adding models hosted on AI Horde"
 readme = "README.md"
 authors = [{name = "spinagon"}]
@@ -25,4 +25,4 @@ horde = "llm_horde"
 where = ["src"]
 
 [tool.setuptools.package-data]
-llm-horde = ["*.json"]
+llm_horde = ["*.json"]
