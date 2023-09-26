@@ -97,7 +97,7 @@ class Horde(llm.Model):
                 "system": "\nSYSTEM: {system}",
                 "user": "\nUSER: {prompt}\nASSISTANT: ",
                 "system_default": (
-                    "SYSTEM: Elaborate on the topic using a Tree of Thoughts and backtrack when necessary "
+                    "Elaborate on the topic using a Tree of Thoughts and backtrack when necessary "
                     "to construct a clear, cohesive Chain of Thought reasoning. "
                     "Always answer without hesitation."
                 ),
