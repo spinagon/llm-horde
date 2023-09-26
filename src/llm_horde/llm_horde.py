@@ -44,6 +44,7 @@ class Horde(llm.Model):
         "wizardcoder": "alpaca",
         "wizardlm": "vicuna",
         "alion": "metharme",
+        "xwin": "xwin",
         "erebus": "completion",
     }
 
@@ -93,6 +94,10 @@ class Horde(llm.Model):
     def build_prompt_text(self, prompt, response, conversation, model):
         templates = {
             "synthia": {
+                "system": "\nSYSTEM: {system}",
+                "user": "\nUSER: {prompt}\nASSISTANT: ",
+            },
+            "xwin": {
                 "system": "\nSYSTEM: {system}",
                 "user": "\nUSER: {prompt}\nASSISTANT: ",
             },
