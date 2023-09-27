@@ -93,8 +93,7 @@ class Horde(llm.Model):
         )
         horde_request.APIKEY = apikey or horde_request.ANON_APIKEY
         gen = horde_request.generate(prompt=prompt_text, models=models, options=options)
-        response.response_json["models"] = [x["model"] for x in gen["generations"]]
-        response.model.model_id = response.response_json["models"][0]
+        response.model.model_id = f"{self.model_prefix}/{gen['generations'][0]['model']}"
         response.response_json["kudos"] = gen["kudos"]
         if prompt.options.debug:
             print("Response:", repr(gen), "\n---")
