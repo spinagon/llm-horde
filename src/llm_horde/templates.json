@@ -1,25 +1,31 @@
 {
   "synthia": {
-    "system": "\nSYSTEM: {system}",
-    "user": "\nUSER: {prompt}\nASSISTANT: ",
+    "system": "\nSYSTEM: {content}",
+    "user": "\nUSER: {content}",
+    "assistant": "\nASSISTANT: {content}",
     "system_default": "Elaborate on the topic using a Tree of Thoughts and backtrack when necessary to construct a clear, cohesive Chain of Thought reasoning. Always answer without hesitation."
   },
   "vicuna": {
-    "system": "\nSYSTEM: {system}",
-    "user": "\nUSER: {prompt}\nASSISTANT: ",
+    "system": "\nSYSTEM: {content}",
+    "user": "\nUSER: {content}",
+    "assistant": "\nASSISTANT: {content}",
     "system_default": "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions."
   },
   "metharme": {
-    "system": "\n<|system|>{system}",
-    "user": "\n<|user|>{prompt}\n<|model|>"
+    "system": "\n<|system|>{content}",
+    "user": "\n<|user|>{content}",
+    "assistant": "\n<|model|>{content}",
+    "system_default": "A story writing assistant. Reply to user's prompts in a consistent and helpful fashion."
   },
   "alpaca": {
-    "system": "\n{system}\n",
-    "user": "\n### Instruction:\n{prompt}\n\n### Response:\n",
+    "system": "\n{content}\n",
+    "user": "\n### Instruction:\n{content}\n",
+    "assistant": "\n### Response:\n{content}",
     "system_default": "Below is an instruction that describes a task. Write a response that appropriately completes the request."
   },
   "completion": {
-    "system": "{system}",
-    "user": "{prompt}"
+    "system": "{content}",
+    "user": "{content}",
+    "assistant": "{content}"
   }
 }

@@ -120,17 +120,23 @@ class Horde(llm.Model):
         if prompt.system is None:
             prompt.system = templates[instruct].get("system_default", None)
 
-        context = rebuild_conversation(conversation, templates[instruct])
+        messages = []
+        if conversation:
+            if conversation.responses and conversation.responses[0].prompt.system:
+                messages.append({"role": "system", "content": conversation.responses[0].prompt.system})
+            for resp in conversation.responses:
+                if resp.prompt.prompt:
+                    messages.append({"role": "user", "content": resp.prompt.prompt})
+                messages.append({"role": "assistant", "content": resp.text()})
 
         if prompt.prompt == "" or instruct == "completion":
-            prompt_text = context + prompt.prompt
+            messages.append({"role": "completion", "content": prompt.prompt})
         else:
-            prompt_text = context
             if prompt.system:
-                prompt_text += templates[instruct]["system"].format(
-                    system=prompt.system
-                )
-            prompt_text += templates[instruct]["user"].format(prompt=prompt.prompt)
+                messages.append({"role": "system", "content": prompt.system})
+            messages.append({"role": "user", "content": prompt.prompt})
+            messages.append({"role": "assistant", "content": ""})
+        prompt_text = build_conversation(messages, templates[instruct])
         if prompt.options.debug:
             print("Full prompt:\n", prompt_text, "\n---")
         return prompt_text
@@ -139,19 +145,11 @@ class Horde(llm.Model):
         return f"AI Horde: {self.model_id}"
 
 
-def rebuild_conversation(conversation, template):
-    context = []
-    if conversation:
-        if conversation.responses and conversation.responses[0].prompt.system:
-            context.append(
-                template["system"].format(
-                    system=conversation.responses[0].prompt.system
-                )
-            )
-        for resp in conversation.responses:
-            if resp.prompt.prompt:
-                context.append(
-                    template["user"].format(prompt=resp.prompt.prompt)
-                )
-            context.append(resp.text())
-    return "".join(context)
+def build_conversation(messages, template):
+    conversation = []
+    template["completion"] = "{content}"
+    for message in messages:
+        role = message["role"]
+        content = message["content"]
+        conversation.append(template[role].format(content=content))
+    return "".join(conversation)
