@@ -19,7 +19,7 @@ def get_headers():
 def generate(prompt, models, options):
     params = {
         "max_context_length": 1024,
-        "max_length": 80,
+        "max_length": 120,
     }
     params.update(options)
     r = httpx.post(

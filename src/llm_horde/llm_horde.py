@@ -34,7 +34,7 @@ class Horde(llm.Model):
         return "AI Horde: {}".format(self.model_id)
 
     class Options(llm.Options):
-        max_tokens: int = 80
+        max_tokens: int = 120
         temperature: float = None
         top_k: int = None
         top_p: float = None
