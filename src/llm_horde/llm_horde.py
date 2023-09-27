@@ -1,8 +1,11 @@
 import re
 import importlib
 import json
+from typing import Optional
 
+from pydantic import Field
 import llm
+
 from . import horde_request
 
 
@@ -12,9 +15,7 @@ def register_models(register):
     try:
         MODELS = horde_request.get_models()
         for model in MODELS:
-            #register(ModelFactory.model(f"{Horde.model_prefix}/{model}"))
             register(Horde(model_id=f"{Horde.model_prefix}/{model}", model_name=model))
-        #register(ModelFactory.model(Horde.model_prefix))
         register(Horde(model_id=Horde.model_prefix, model_name=Horde.model_prefix))
     except Exception as e:
         print("llm-horde plugin error in register_models():", repr(e))
@@ -34,10 +35,10 @@ class Horde(llm.Model):
         return "AI Horde: {}".format(self.model_id)
 
     class Options(llm.Options):
-        max_tokens: int = 120
-        temperature: float = None
-        top_k: int = None
-        top_p: float = None
+        max_tokens: Optional[int] = Field(ge=16, le=512, default=120)
+        temperature: Optional[float] = Field(ge=0, le=5, default=None)
+        top_k: Optional[int] = Field(ge=0, le=100, default=None)
+        top_p: Optional[float] = Field(ge=0.001, le=1, default=None)
         key: str = None
         pattern: str = ""
         debug: bool = False
