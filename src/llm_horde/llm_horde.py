@@ -12,8 +12,10 @@ def register_models(register):
     try:
         MODELS = horde_request.get_models()
         for model in MODELS:
-            register(ModelFactory.model(f"{Horde.model_prefix}/{model}"))
-        register(ModelFactory.model(Horde.model_prefix))
+            #register(ModelFactory.model(f"{Horde.model_prefix}/{model}"))
+            register(Horde(model_id=f"{Horde.model_prefix}/{model}", model_name=model))
+        #register(ModelFactory.model(Horde.model_prefix))
+        register(Horde(model_id=Horde.model_prefix, model_name=Horde.model_prefix))
     except Exception as e:
         print("llm-horde plugin error in register_models():", repr(e))
         return
@@ -24,8 +26,12 @@ class Horde(llm.Model):
     needs_key = "aihorde"
     key_env_var = "AIHORDE_KEY"
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, model_id, model_name):
+        self.model_id = model_id
+        self.model_name = model_name
+
+    def __str__(self):
+        return "AI Horde: {}".format(self.model_id)
 
     class Options(llm.Options):
         max_tokens: int = 80
@@ -66,7 +72,7 @@ class Horde(llm.Model):
             if not models:
                 print(f"Model matching {prompt.options.pattern} not found")
         else:
-            models = [self.model_id[len(self.model_prefix) + 1 :]]
+            models = [self.model_name]
         if prompt.options.debug:
             print(models)
 
@@ -88,6 +94,7 @@ class Horde(llm.Model):
         horde_request.APIKEY = apikey or horde_request.ANON_APIKEY
         gen = horde_request.generate(prompt=prompt_text, models=models, options=options)
         response.response_json["models"] = [x["model"] for x in gen["generations"]]
+        response.model.model_id = response.response_json["models"][0]
         response.response_json["kudos"] = gen["kudos"]
         if prompt.options.debug:
             print("Response:", repr(gen), "\n---")
