@@ -154,11 +154,3 @@ def rebuild_conversation(conversation, template):
                 )
             context.append(resp.text())
     return "".join(context)
-
-
-class ModelFactory:
-    @classmethod
-    def model(cls, model_id):
-        return type(
-            "AI Horde", (Horde,), {"model_id": model_id, "model_name": "AI Horde"}
-        )()
