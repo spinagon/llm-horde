@@ -1,5 +1,3 @@
-import re
-import importlib
 import json
 from typing import Optional
 
@@ -11,10 +9,8 @@ from . import horde_request
 
 @llm.hookimpl
 def register_models(register):
-    global MODELS
     try:
-        MODELS = horde_request.get_models()
-        for model in MODELS:
+        for model in horde_request.get_models():
             register(Horde(model_id=f"{Horde.model_prefix}/{model}", model_name=model))
         register(Horde(model_id=Horde.model_prefix, model_name=Horde.model_prefix))
     except Exception as e:
@@ -44,19 +40,6 @@ class Horde(llm.Model):
         debug: bool = False
         instruct: str = "auto"
 
-    instruct_auto = {
-        "synthia": "synthia",
-        "mythomax": "alpaca",
-        "holomax": "alpaca",
-        "mlewd": "alpaca",
-        "airo": "alpaca",
-        "wizardcoder": "alpaca",
-        "wizardlm": "vicuna",
-        "xwin": "vicuna",
-        "alion": "metharme",
-        "erebus": "completion",
-    }
-
     def execute(self, prompt, stream, response, conversation):
         response.response_json = {}
         if self.model_id == self.model_prefix:
@@ -65,11 +48,7 @@ class Horde(llm.Model):
                     if resp.prompt.options.pattern:
                         prompt.options.pattern = resp.prompt.options.pattern
                         break
-            models = [
-                model
-                for model in MODELS
-                if re.search(prompt.options.pattern, model, flags=re.IGNORECASE)
-            ]
+            models = horde_request.match_model(prompt.options.pattern)
             if not models:
                 print(f"Model matching {prompt.options.pattern} not found")
         else:
@@ -93,28 +72,24 @@ class Horde(llm.Model):
             env_var=self.key_env_var,
         )
         horde_request.APIKEY = apikey or horde_request.ANON_APIKEY
+
         gen = horde_request.generate(prompt=prompt_text, models=models, options=options)
-        response.model.model_id = f"{self.model_prefix}/{gen['generations'][0]['model']}"
+
+        response.model.model_id = (
+            f"{self.model_prefix}/{gen['generations'][0]['model']}"
+        )
         response.response_json["kudos"] = gen["kudos"]
+
         if prompt.options.debug:
             print("Response:", repr(gen), "\n---")
+
         return [x["text"] for x in gen["generations"]]
 
-    def build_prompt_text(self, prompt, response, conversation, model):
-        templates = json.loads(
-            importlib.resources.files("llm_horde")
-            .joinpath("templates.json")
-            .read_text()
+    def build_prompt_text(self, prompt, response, conversation, model_name):
+        templates = horde_request.templates()
+        instruct = horde_request.get_instruct(
+            mode=prompt.options.instruct, model_name=model_name
         )
-        if prompt.options.instruct == "auto":
-            for key, value in self.instruct_auto.items():
-                if key.lower() in model.lower():
-                    instruct = value
-                    break
-            else:
-                instruct = "alpaca"
-        else:
-            instruct = prompt.options.instruct
         response.response_json["instruct"] = instruct
 
         if prompt.system is None:
@@ -123,7 +98,12 @@ class Horde(llm.Model):
         messages = []
         if conversation:
             if conversation.responses and conversation.responses[0].prompt.system:
-                messages.append({"role": "system", "content": conversation.responses[0].prompt.system})
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": conversation.responses[0].prompt.system,
+                    }
+                )
             for resp in conversation.responses:
                 if resp.prompt.prompt:
                     messages.append({"role": "user", "content": resp.prompt.prompt})
@@ -136,20 +116,13 @@ class Horde(llm.Model):
                 messages.append({"role": "system", "content": prompt.system})
             messages.append({"role": "user", "content": prompt.prompt})
             messages.append({"role": "assistant", "content": ""})
-        prompt_text = build_conversation(messages, templates[instruct])
+
+        prompt_text = horde_request.build_conversation(messages, templates[instruct])
+
         if prompt.options.debug:
             print("Full prompt:\n", prompt_text, "\n---")
+
         return prompt_text
 
     def __repr__(self):
         return f"AI Horde: {self.model_id}"
-
-
-def build_conversation(messages, template):
-    conversation = []
-    template["completion"] = "{content}"
-    for message in messages:
-        role = message["role"]
-        content = message["content"]
-        conversation.append(template[role].format(content=content))
-    return "".join(conversation)
