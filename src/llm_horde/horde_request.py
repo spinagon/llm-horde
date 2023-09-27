@@ -4,6 +4,7 @@ import time
 import sys
 import json
 import importlib
+import importlib.metadata
 import re
 
 import requests
