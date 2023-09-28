@@ -58,6 +58,7 @@ class Horde(llm.Model):
         options = {}
         if conversation and conversation.responses:
             options.update(conversation.responses[-1].prompt.options.model_dump(exclude_unset=True))
+            options.pop("debug", None)
 
         options.update(prompt.options.model_dump(exclude_unset=True, exclude_defaults=True))
         for key, value in options.items():
