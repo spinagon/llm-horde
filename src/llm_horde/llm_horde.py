@@ -62,7 +62,8 @@ class Horde(llm.Model):
                 setattr(prompt.options, key, value)
 
         options.update(prompt.options.model_dump(exclude_unset=True, exclude_defaults=True))
-        options["max_length"] = options.pop("max_tokens", None)
+        options.pop("max_tokens", None)
+        options["max_length"] = prompt.options.max_tokens
 
         if prompt.options.debug:
             print("Options:", options)
