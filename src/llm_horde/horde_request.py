@@ -58,7 +58,7 @@ def middle_out(prompt, length):
     return prompt[:start] + prompt[end:]
 
 
-def generate(prompt, models, options):
+def generate(prompt, models=[], options={}):
     params = {
         "max_context_length": 2048,
         "max_length": 240,
