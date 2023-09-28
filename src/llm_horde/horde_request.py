@@ -97,7 +97,7 @@ def get_models():
         print(r.text)
         return []
     models = {x["models"][0] for x in data}
-    MODELS_CACHE[:] = list(models)
+    MODELS_CACHE[:] = sorted(models)
     return MODELS_CACHE
 
 

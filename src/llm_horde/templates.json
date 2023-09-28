@@ -18,8 +18,8 @@
     "system_default": "A story writing assistant. Reply to user's prompts in a consistent and helpful fashion."
   },
   "alpaca": {
-    "system": "\n{content}\n",
-    "user": "\n### Instruction:\n{content}\n",
+    "system": "\n### Instruction:\n{content}\n",
+    "user": "\n### Input:\n{content}\n",
     "assistant": "\n### Response:\n{content}",
     "system_default": "Below is an instruction that describes a task. Write a response that appropriately completes the request."
   },
