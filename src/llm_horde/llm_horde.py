@@ -32,12 +32,24 @@ class Horde(llm.Model):
 
     class Options(llm.Options):
         max_tokens: int = Field(ge=16, le=512, default=256)
-        temperature: float | None = Field(None, description="Temperature value.", ge=0.0, le=5.0)
-        tfs: float | None = Field(None, description="Tail free sampling value.", ge=0.0, le=1.0)
-        top_a: float | None = Field(None, description="Top-a sampling value.", ge=0.0, le=1.0)
-        top_k: int | None = Field(None, description="Top-k sampling value.", ge=0, le=100)
-        top_p: float | None = Field(None, description="Top-p sampling value.", ge=0.001, le=1.0)
-        typical: float | None = Field(None, description="Typical sampling value.", ge=0.0, le=1.0)
+        temperature: float | None = Field(
+            None, description="Temperature value.", ge=0.0, le=5.0
+        )
+        tfs: float | None = Field(
+            None, description="Tail free sampling value.", ge=0.0, le=1.0
+        )
+        top_a: float | None = Field(
+            None, description="Top-a sampling value.", ge=0.0, le=1.0
+        )
+        top_k: int | None = Field(
+            None, description="Top-k sampling value.", ge=0, le=100
+        )
+        top_p: float | None = Field(
+            None, description="Top-p sampling value.", ge=0.001, le=1.0
+        )
+        typical: float | None = Field(
+            None, description="Typical sampling value.", ge=0.0, le=1.0
+        )
 
         key: str = None
         pattern: str = ""
@@ -57,10 +69,14 @@ class Horde(llm.Model):
 
         options = {}
         if conversation and conversation.responses:
-            options.update(conversation.responses[-1].prompt.options.model_dump(exclude_unset=True))
+            options.update(
+                conversation.responses[-1].prompt.options.model_dump(exclude_unset=True)
+            )
             options.pop("debug", None)
 
-        options.update(prompt.options.model_dump(exclude_unset=True, exclude_defaults=True))
+        options.update(
+            prompt.options.model_dump(exclude_unset=True, exclude_defaults=True)
+        )
         for key, value in options.items():
             setattr(prompt.options, key, value)
         options.pop("max_tokens", None)
@@ -107,9 +123,14 @@ class Horde(llm.Model):
         messages = []
         if conversation:
             for resp in conversation.responses:
-                if resp.prompt.prompt.strip(" ") and resp.prompt.options.instruct != "completion":
+                if (
+                    resp.prompt.prompt.strip(" ")
+                    and resp.prompt.options.instruct != "completion"
+                ):
                     if resp.prompt.system:
-                        messages.append({"role": "system", "content": resp.prompt.system})
+                        messages.append(
+                            {"role": "system", "content": resp.prompt.system}
+                        )
                     messages.append({"role": "user", "content": resp.prompt.prompt})
                     messages.append({"role": "assistant", "content": resp.text()})
                 else:
