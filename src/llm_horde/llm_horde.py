@@ -113,7 +113,7 @@ class Horde(llm.Model):
                     }
                 )
             for resp in conversation.responses:
-                if resp.prompt.prompt.strip() or resp.prompt.options.instruct != "completion":
+                if resp.prompt.prompt.strip() and resp.prompt.options.instruct != "completion":
                     messages.append({"role": "user", "content": resp.prompt.prompt})
                     messages.append({"role": "assistant", "content": resp.text()})
                 else:
