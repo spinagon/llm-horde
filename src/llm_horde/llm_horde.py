@@ -106,21 +106,16 @@ class Horde(llm.Model):
 
         messages = []
         if conversation:
-            if conversation.responses and conversation.responses[0].prompt.system:
-                messages.append(
-                    {
-                        "role": "system",
-                        "content": conversation.responses[0].prompt.system,
-                    }
-                )
             for resp in conversation.responses:
-                if resp.prompt.prompt.strip() and resp.prompt.options.instruct != "completion":
+                if resp.prompt.prompt.strip(" ") and resp.prompt.options.instruct != "completion":
+                    if resp.prompt.system:
+                        messages.append({"role": "system", "content": resp.prompt.system})
                     messages.append({"role": "user", "content": resp.prompt.prompt})
                     messages.append({"role": "assistant", "content": resp.text()})
                 else:
                     messages.append({"role": "completion", "content": resp.text()})
 
-        if prompt.prompt.strip() == "" or instruct == "completion":
+        if prompt.prompt.strip(" ") == "" or instruct == "completion":
             messages.append({"role": "completion", "content": prompt.prompt})
         else:
             if prompt.system:

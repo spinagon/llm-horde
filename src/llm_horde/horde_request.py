@@ -52,12 +52,19 @@ def get_instruct(mode, model_name):
     return "alpaca"
 
 
+def middle_out(prompt, length):
+    start = prompt.rfind(" ", 0, length // 2)
+    end = prompt.find("", len(prompt) - (length // 2), len(prompt))
+    return prompt[:start] + prompt[end:]
+
+
 def generate(prompt, models, options):
     params = {
-        "max_context_length": 1024,
-        "max_length": 120,
+        "max_context_length": 2048,
+        "max_length": 240,
     }
     params.update(options)
+    prompt = middle_out(prompt, params["max_context_length"] * 3)
     r = requests.post(
         "https://aihorde.net/api/v2/generate/text/async",
         headers=get_headers(),
