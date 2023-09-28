@@ -46,7 +46,7 @@ class Horde(llm.Model):
 
     def execute(self, prompt, stream, response, conversation):
         response.response_json = {}
-        if self.model_id == self.model_prefix:
+        if self.model_name not in horde_request.get_models() or prompt.options.pattern:
             models = horde_request.match_model(prompt.options.pattern)
             if not models:
                 print(f"Model matching {prompt.options.pattern} not found")
@@ -58,17 +58,21 @@ class Horde(llm.Model):
         options = {}
         if conversation and conversation.responses:
             options.update(conversation.responses[-1].prompt.options.model_dump(exclude_unset=True))
-            for key, value in options.items():
-                setattr(prompt.options, key, value)
 
         options.update(prompt.options.model_dump(exclude_unset=True, exclude_defaults=True))
+        for key, value in options.items():
+            setattr(prompt.options, key, value)
         options.pop("max_tokens", None)
         options["max_length"] = prompt.options.max_tokens
 
         if prompt.options.debug:
             print("Options:", options)
 
-        prompt_text = self.build_prompt_text(prompt, response, conversation, models[-1])
+        if self.model_name in horde_request.get_models():
+            model_name = self.model_name
+        else:
+            model_name = models[-1]
+        prompt_text = self.build_prompt_text(prompt, response, conversation, model_name)
 
         apikey = llm.get_key(
             explicit_key=prompt.options.key,
@@ -109,13 +113,13 @@ class Horde(llm.Model):
                     }
                 )
             for resp in conversation.responses:
-                if resp.prompt.prompt or resp.prompt.options.instruct != "completion":
+                if resp.prompt.prompt.strip() or resp.prompt.options.instruct != "completion":
                     messages.append({"role": "user", "content": resp.prompt.prompt})
                     messages.append({"role": "assistant", "content": resp.text()})
                 else:
                     messages.append({"role": "completion", "content": resp.text()})
 
-        if prompt.prompt == "" or instruct == "completion":
+        if prompt.prompt.strip() == "" or instruct == "completion":
             messages.append({"role": "completion", "content": prompt.prompt})
         else:
             if prompt.system:
