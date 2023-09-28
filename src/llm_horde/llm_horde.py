@@ -47,28 +47,27 @@ class Horde(llm.Model):
     def execute(self, prompt, stream, response, conversation):
         response.response_json = {}
         if self.model_id == self.model_prefix:
-            if conversation and not prompt.options.pattern:
-                for resp in conversation.responses[::-1]:
-                    if resp.prompt.options.pattern:
-                        prompt.options.pattern = resp.prompt.options.pattern
-                        break
             models = horde_request.match_model(prompt.options.pattern)
             if not models:
                 print(f"Model matching {prompt.options.pattern} not found")
         else:
             models = [self.model_name]
         if prompt.options.debug:
-            print(models)
+            print("Models:", models)
 
-        prompt_text = self.build_prompt_text(prompt, response, conversation, models[0])
+        options = {}
+        if conversation and conversation.responses:
+            options.update(conversation.responses[-1].prompt.options.model_dump(exclude_unset=True))
+            for key, value in options.items():
+                setattr(prompt.options, key, value)
 
-        options = {"max_length": prompt.options.max_tokens}
-        if prompt.options.temperature:
-            options["temperature"] = prompt.options.temperature
-        if prompt.options.top_k:
-            options["top_k"] = prompt.options.top_k
-        if prompt.options.top_p:
-            options["top_p"] = prompt.options.top_p
+        options.update(prompt.options.model_dump(exclude_unset=True, exclude_defaults=True))
+        options["max_length"] = options.pop("max_tokens", None)
+
+        if prompt.options.debug:
+            print("Options:", options)
+
+        prompt_text = self.build_prompt_text(prompt, response, conversation, models[-1])
 
         apikey = llm.get_key(
             explicit_key=prompt.options.key,
@@ -109,9 +108,11 @@ class Horde(llm.Model):
                     }
                 )
             for resp in conversation.responses:
-                if resp.prompt.prompt:
+                if resp.prompt.prompt or resp.prompt.options.instruct != "completion":
                     messages.append({"role": "user", "content": resp.prompt.prompt})
-                messages.append({"role": "assistant", "content": resp.text()})
+                    messages.append({"role": "assistant", "content": resp.text()})
+                else:
+                    messages.append({"role": "completion", "content": resp.text()})
 
         if prompt.prompt == "" or instruct == "completion":
             messages.append({"role": "completion", "content": prompt.prompt})
