@@ -31,10 +31,14 @@ class Horde(llm.Model):
         return "AI Horde: {}".format(self.model_id)
 
     class Options(llm.Options):
-        max_tokens: Optional[int] = Field(ge=16, le=512, default=120)
-        temperature: Optional[float] = Field(ge=0, le=5, default=None)
-        top_k: Optional[int] = Field(ge=0, le=100, default=None)
-        top_p: Optional[float] = Field(ge=0.001, le=1, default=None)
+        max_tokens: int = Field(ge=16, le=512, default=256)
+        temperature: float | None = Field(None, description="Temperature value.", ge=0.0, le=5.0)
+        tfs: float | None = Field(None, description="Tail free sampling value.", ge=0.0, le=1.0)
+        top_a: float | None = Field(None, description="Top-a sampling value.", ge=0.0, le=1.0)
+        top_k: int | None = Field(None, description="Top-k sampling value.", ge=0, le=100)
+        top_p: float | None = Field(None, description="Top-p sampling value.", ge=0.001, le=1.0)
+        typical: float | None = Field(None, description="Typical sampling value.", ge=0.0, le=1.0)
+
         key: str = None
         pattern: str = ""
         debug: bool = False
