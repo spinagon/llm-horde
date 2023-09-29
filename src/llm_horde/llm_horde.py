@@ -117,10 +117,11 @@ class Horde(llm.Model):
         )
         response.response_json["instruct"] = instruct
 
-        if prompt.system is None:
-            prompt.system = templates[instruct].get("system_default", None)
-
         messages = []
+        if prompt.system is None:
+            messages.append(
+                            {"role": "system_default", "content": ""}
+                        )
         if conversation:
             for resp in conversation.responses:
                 if (

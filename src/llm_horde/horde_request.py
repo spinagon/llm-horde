@@ -26,9 +26,12 @@ def get_headers():
 
 
 def templates():
-    return json.loads(
+    templates = json.loads(
         importlib.resources.files("llm_horde").joinpath("templates.json").read_text()
     )
+    for template in templates.values():
+        template["system_default"] = template["system"].format(content=template.get("system_default", ""))
+    return templates
 
 
 def get_instruct(mode, model_name):
