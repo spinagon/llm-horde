@@ -30,7 +30,9 @@ def templates():
         importlib.resources.files("llm_horde").joinpath("templates.json").read_text()
     )
     for template in templates.values():
-        template["system_default"] = template["system"].format(content=template.get("system_default", ""))
+        template["system_default"] = template["system"].format(
+            content=template.get("system_default", "")
+        )
     return templates
 
 

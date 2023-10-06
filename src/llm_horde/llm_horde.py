@@ -1,5 +1,6 @@
 import json
 from typing import Optional
+import time
 
 from pydantic import Field
 import llm
@@ -88,7 +89,8 @@ class Horde(llm.Model):
         if self.model_name in horde_request.get_models():
             model_name = self.model_name
         else:
-            model_name = models[-1]
+            # choose at pseudorandom
+            model_name = models[int(time.time() * 100) % len(models)]
         prompt_text = self.build_prompt_text(prompt, response, conversation, model_name)
 
         apikey = llm.get_key(
@@ -119,9 +121,7 @@ class Horde(llm.Model):
 
         messages = []
         if prompt.system is None:
-            messages.append(
-                            {"role": "system_default", "content": ""}
-                        )
+            messages.append({"role": "system_default", "content": ""})
         if conversation:
             for resp in conversation.responses:
                 if (
