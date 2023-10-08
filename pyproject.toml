@@ -1,6 +1,6 @@
 [project]
 name = "llm-horde"
-version = "0.4"
+version = "0.5"
 description = "Plugin for LLM adding models hosted on AI Horde"
 readme = "README.md"
 authors = [{name = "spinagon"}]
