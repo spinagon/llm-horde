@@ -26,7 +26,7 @@
   "llama-3": {
     "system": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{content}<|eot_id|>",
     "user": "<|start_header_id|>user<|end_header_id|>\n\n{content}<|eot_id|>",
-    "assistant": "<|start_header_id|>assistant<|end_header_id|>",
+    "assistant": "<|start_header_id|>assistant<|end_header_id|>\n\n{content}",
     "system_default": "Below is an instruction that describes a task. Write a response that appropriately completes the request."
   },
   "completion": {
