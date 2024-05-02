@@ -40,6 +40,7 @@ def get_instruct(mode, model_name):
     if mode != "auto":
         return mode
     instruct_auto = {
+        "llama-3": "llama-3",
         "synthia": "synthia",
         "mythomax": "alpaca",
         "holomax": "alpaca",
